@@ -1,0 +1,7 @@
+# Minimal requirements for Building Evacuation System
+# Use this if the main requirements.txt fails
+
+numpy
+matplotlib
+scipy
+networkx

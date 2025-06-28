@@ -1,0 +1,31 @@
+# Core dependencies for Building Evacuation System
+numpy>=1.24.0,<2.0.0
+matplotlib>=3.7.0,<4.0.0
+scipy>=1.10.0,<2.0.0
+networkx>=3.0,<4.0.0
+
+# Enhanced pathfinding and algorithm dependencies
+dataclasses>=0.6; python_version<"3.7"  # For Python < 3.7 compatibility
+typing-extensions>=4.0.0  # Enhanced type hints
+# heapq  # Built-in, but documented for clarity
+
+# Performance analysis and visualization
+scikit-learn>=1.3.0,<2.0.0
+pandas>=2.0.0,<3.0.0
+seaborn>=0.12.0,<1.0.0
+plotly>=5.0.0,<6.0.0  # Interactive visualizations
+
+# Bio-inspired algorithm dependencies
+# random  # Built-in, but documented for clarity
+# time  # Built-in, but documented for clarity
+# collections  # Built-in, but documented for clarity
+
+# Build dependencies
+setuptools>=65.0.0
+wheel>=0.38.0
+
+# Development and testing
+pytest>=7.0.0,<8.0.0
+pytest-cov>=4.0.0,<5.0.0
+black>=23.0.0,<24.0.0  # Code formatting
+flake8>=6.0.0,<7.0.0  # Linting
