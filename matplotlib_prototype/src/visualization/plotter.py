@@ -1,6 +1,5 @@
 """
 3D visualization module for building evacuation simulation.
-Uses matplotlib for real-time 3D plotting and animation.
 """
 
 import matplotlib.pyplot as plt
@@ -9,6 +8,16 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from typing import List, Tuple, Dict, Optional
 import time
+
+# Try to use interactive backend, fallback to non-interactive
+import matplotlib
+try:
+    matplotlib.use('TkAgg')  # Try TkAgg first
+except:
+    try:
+        matplotlib.use('Qt5Agg')  # Try Qt5Agg
+    except:
+        matplotlib.use('Agg')  # Fallback to non-interactive
 
 from simulation.building import Building, Person, EvacuationSimulation
 from algorithms.pathfinding import PathFinder
@@ -229,7 +238,8 @@ class BuildingVisualizer:
             return []
 
         self.animation = animation.FuncAnimation(
-            self.fig, animate_frame, interval=interval, blit=False, repeat=True)
+            self.fig, animate_frame, interval=interval, blit=False, repeat=True, 
+            save_count=100)  # Add save_count to fix warning
 
         return self.animation
 
