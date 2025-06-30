@@ -238,7 +238,11 @@ export class BuildingService {
    */
   addPerson(position: Position, name?: string): Person {
     console.log('BuildingService: Adding person at position:', position);
-    console.log('BuildingService: Building map dimensions:', this.shape);
+    console.log('BuildingService: Building map dimensions:', {
+      width: this.buildingMap.length,
+      height: this.buildingMap[0]?.length || 0,
+      floors: this.buildingMap[0]?.[0]?.length || 0
+    });
 
     // Validate position
     if (!this.isValidPosition(position.x, position.y, position.floor)) {
@@ -305,17 +309,27 @@ export class BuildingService {
 
       // Move along path
       if (person.currentPathIndex < person.path.length - 1) {
-        person.currentPathIndex += person.movementSpeed;
-        if (person.currentPathIndex >= person.path.length) {
-          person.currentPathIndex = person.path.length - 1;
+        const nextIndex = person.currentPathIndex + person.movementSpeed;
+        const targetIndex = Math.min(nextIndex, person.path.length - 1);
+        
+        // Check if next position is safe (not on fire)
+        const nextPosition = person.path[targetIndex];
+        const { x, y, floor } = nextPosition;
+        
+        // Don't move if next position is on fire
+        if (this.buildingMap[x][y][floor] === CellType.FIRE) {
+          // Try to find alternate path or stay in place
+          console.log(`Person ${person.name} blocked by fire at ${x},${y},${floor}`);
+          continue;
         }
-
-        person.position = person.path[person.currentPathIndex];
+        
+        person.currentPathIndex = targetIndex;
+        person.position = nextPosition;
 
         // Check if reached exit
-        const { x, y, floor } = person.position;
         if (this.buildingMap[x][y][floor] === CellType.EXIT) {
           person.isEvacuated = true;
+          console.log(`Person ${person.name} evacuated successfully!`);
         }
       }
     }
@@ -376,6 +390,7 @@ export class BuildingService {
    */
   private step(): void {
     this.spreadFire();
+    this.recalculateBlockedPaths();
     this.movePeople();
     this.timestep++;
     this.updateObservables();
@@ -495,6 +510,30 @@ export class BuildingService {
     if (this.isSimulationRunning) {
       this.stopSimulation();
       this.startSimulation();
+    }
+  }
+
+  /**
+   * Recalculate paths for people whose current paths are blocked by fire
+   */
+  recalculateBlockedPaths(): void {
+    for (const person of this.people) {
+      if (person.isEvacuated || person.path.length === 0) {
+        continue;
+      }
+
+      // Check if current path is blocked by fire
+      const isPathBlocked = person.path.some(pos => {
+        const { x, y, floor } = pos;
+        return this.buildingMap[x][y][floor] === CellType.FIRE;
+      });
+
+      if (isPathBlocked) {
+        console.log(`Recalculating path for ${person.name} - current path blocked by fire`);
+        // Clear current path so it can be recalculated
+        person.path = [];
+        person.currentPathIndex = 0;
+      }
     }
   }
 }

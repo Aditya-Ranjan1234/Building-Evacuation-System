@@ -76,6 +76,18 @@ interface ComparisonResult {
                 <input type="checkbox" [(ngModel)]="testDijkstra">
                 <span>Dijkstra's Algorithm</span>
               </label>
+              <label class="checkbox-item">
+                <input type="checkbox" [(ngModel)]="testBFS">
+                <span>Breadth-First Search (BFS)</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" [(ngModel)]="testDFS">
+                <span>Depth-First Search (DFS)</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" [(ngModel)]="testGreedy">
+                <span>Greedy Best-First Search</span>
+              </label>
             </div>
           </div>
 
@@ -145,53 +157,19 @@ interface ComparisonResult {
               </div>
               
               <div class="summary-card">
-                <div class="summary-title">A* Wins</div>
-                <div class="summary-value">{{getAlgorithmWins('A*')}}</div>
+                <div class="summary-title">Successful Paths</div>
+                <div class="summary-value">{{getSuccessfulPaths()}}</div>
               </div>
               
               <div class="summary-card">
-                <div class="summary-title">Dijkstra Wins</div>
-                <div class="summary-value">{{getAlgorithmWins('Dijkstra')}}</div>
+                <div class="summary-title">Fastest Algorithm</div>
+                <div class="summary-value">{{getFastestAlgorithm()}}</div>
               </div>
               
               <div class="summary-card">
-                <div class="summary-title">Avg A* Time</div>
-                <div class="summary-value">{{getAverageTime('A*').toFixed(2)}}ms</div>
+                <div class="summary-title">Most Reliable</div>
+                <div class="summary-value">{{getMostReliableAlgorithm()}}</div>
               </div>
-              
-              <div class="summary-card">
-                <div class="summary-title">Avg Dijkstra Time</div>
-                <div class="summary-value">{{getAverageTime('Dijkstra').toFixed(2)}}ms</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Algorithm Information -->
-      <div class="info-section">
-        <h3>ℹ️ Algorithm Information</h3>
-        
-        <div class="algorithm-cards">
-          <div class="algorithm-card">
-            <h4>A* Algorithm</h4>
-            <div class="algorithm-details">
-              <p><strong>Time Complexity:</strong> O((V + E) log V)</p>
-              <p><strong>Space Complexity:</strong> O(V)</p>
-              <p><strong>Best Use Case:</strong> When you have a good heuristic function</p>
-              <p><strong>Advantages:</strong> Fast, optimal paths, heuristic-guided search</p>
-              <p><strong>Disadvantages:</strong> Performance depends on heuristic quality</p>
-            </div>
-          </div>
-          
-          <div class="algorithm-card">
-            <h4>Dijkstra's Algorithm</h4>
-            <div class="algorithm-details">
-              <p><strong>Time Complexity:</strong> O((V + E) log V)</p>
-              <p><strong>Space Complexity:</strong> O(V)</p>
-              <p><strong>Best Use Case:</strong> When you need guaranteed shortest paths</p>
-              <p><strong>Advantages:</strong> Optimal, no heuristic needed, explores uniformly</p>
-              <p><strong>Disadvantages:</strong> No heuristic guidance, explores many nodes</p>
             </div>
           </div>
         </div>
@@ -208,102 +186,81 @@ interface ComparisonResult {
     .header-section {
       text-align: center;
       margin-bottom: 2rem;
-      
-      h2 {
-        color: #2c3e50;
-        margin-bottom: 0.5rem;
-      }
-      
-      p {
-        color: #7f8c8d;
-        font-size: 1.1rem;
-      }
+    }
+
+    .header-section h2 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
     }
 
     .content-grid {
       display: grid;
-      grid-template-columns: 350px 1fr;
+      grid-template-columns: 1fr 2fr;
       gap: 2rem;
       margin-bottom: 2rem;
     }
 
     .config-panel, .results-panel {
       background: white;
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .config-panel h3, .results-panel h3 {
-      color: #2c3e50;
-      margin-bottom: 1.5rem;
-      font-size: 1.2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .control-group {
       margin-bottom: 1.5rem;
-      
-      label {
-        display: block;
-        color: #555;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-      }
+    }
+
+    .control-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
     }
 
     .input-row {
       display: flex;
       gap: 0.5rem;
-      
-      input {
-        flex: 1;
-        padding: 0.5rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        
-        &:focus {
-          outline: none;
-          border-color: #667eea;
-        }
-      }
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
 
     .scenario-list {
-      max-height: 200px;
-      overflow-y: auto;
-      border: 2px solid #e0e0e0;
-      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .scenario-item {
       padding: 0.75rem;
-      border-bottom: 1px solid #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      
-      &:hover {
-        background: #f8f9fa;
-      }
-      
-      &.selected {
-        background: #667eea;
-        color: white;
-      }
-      
-      &:last-child {
-        border-bottom: none;
-      }
+      transition: all 0.2s;
+    }
+
+    .scenario-item:hover {
+      background: #f8f9fa;
+    }
+
+    .scenario-item.selected {
+      background: #e3f2fd;
+      border-color: #2196f3;
     }
 
     .scenario-name {
-      font-weight: 500;
+      font-weight: 600;
       margin-bottom: 0.25rem;
     }
 
     .scenario-desc {
-      font-size: 0.85rem;
-      opacity: 0.8;
+      font-size: 0.9rem;
+      color: #666;
     }
 
     .algorithm-list {
@@ -316,269 +273,229 @@ interface ComparisonResult {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid #eee;
+      border-radius: 4px;
       cursor: pointer;
-      
-      input[type="checkbox"] {
-        margin: 0;
-      }
+      transition: background 0.2s;
+    }
+
+    .checkbox-item:hover {
+      background: #f8f9fa;
     }
 
     .run-button {
       width: 100%;
-      padding: 0.75rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1rem;
+      background: #27ae60;
       color: white;
       border: none;
-      border-radius: 6px;
-      font-weight: 500;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-      
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-      }
-      
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-      }
+      transition: background 0.2s;
+    }
+
+    .run-button:hover:not(:disabled) {
+      background: #229954;
+    }
+
+    .run-button:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
     }
 
     .progress-bar {
       width: 100%;
       height: 8px;
-      background: #e0e0e0;
+      background: #ecf0f1;
       border-radius: 4px;
       overflow: hidden;
-      margin-bottom: 0.5rem;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.3s ease;
+      background: #3498db;
+      transition: width 0.3s;
     }
 
     .progress-text {
       text-align: center;
+      margin-top: 0.5rem;
       font-size: 0.9rem;
       color: #666;
     }
 
-    .no-results {
-      text-align: center;
-      color: #999;
-      padding: 2rem;
-      font-style: italic;
-    }
-
-    .result-section {
-      margin-bottom: 2rem;
-      
-      h4 {
-        color: #2c3e50;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #e0e0e0;
-      }
-    }
-
     .results-table {
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
       overflow: hidden;
     }
 
-    .table-header, .table-row {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
-      gap: 1rem;
-      padding: 0.75rem;
-      align-items: center;
-    }
-
     .table-header {
-      background: #f8f9fa;
-      font-weight: 500;
-      color: #555;
-      font-size: 0.9rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+      background: #34495e;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem;
     }
 
     .table-row {
-      border-top: 1px solid #f0f0f0;
-      
-      &.winner {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-      }
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+      padding: 0.75rem;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+
+    .table-row:hover {
+      background: #f8f9fa;
+    }
+
+    .table-row.winner {
+      background: #e8f5e8;
+      border-left: 4px solid #27ae60;
     }
 
     .algorithm-name {
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-weight: 500;
     }
 
     .winner-badge {
-      font-size: 0.8rem;
+      color: #f39c12;
+      font-size: 1.2rem;
     }
 
-    .status {
-      font-size: 0.9rem;
-      
-      &.success {
-        color: #00b894;
-      }
-      
-      &.error {
-        color: #ff6b6b;
-      }
+    .status.success {
+      color: #27ae60;
+      font-weight: 600;
+    }
+
+    .status.error {
+      color: #e74c3c;
+      font-weight: 600;
     }
 
     .summary-section {
       margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 2px solid #e0e0e0;
-      
-      h4 {
-        color: #2c3e50;
-        margin-bottom: 1rem;
-      }
+      padding-top: 1rem;
+      border-top: 2px solid #ecf0f1;
     }
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .summary-card {
       background: #f8f9fa;
       padding: 1rem;
-      border-radius: 6px;
+      border-radius: 4px;
       text-align: center;
-      
-      .summary-title {
-        font-size: 0.85rem;
-        color: #666;
-        margin-bottom: 0.5rem;
-      }
-      
-      .summary-value {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #2c3e50;
-      }
     }
 
-    .info-section {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      
-      h3 {
-        color: #2c3e50;
-        margin-bottom: 1.5rem;
-      }
+    .summary-title {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
     }
 
-    .algorithm-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 1.5rem;
+    .summary-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2c3e50;
     }
 
-    .algorithm-card {
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 1.5rem;
-      
-      h4 {
-        color: #667eea;
-        margin-bottom: 1rem;
-      }
-      
-      .algorithm-details p {
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        
-        strong {
-          color: #2c3e50;
-        }
-      }
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
     }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 768px) {
       .content-grid {
         grid-template-columns: 1fr;
       }
       
-      .algorithm-cards {
+      .table-header, .table-row {
         grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      
+      .table-header > div {
+        font-weight: 600;
+        color: #2c3e50;
       }
     }
   `]
 })
 export class AnalysisComponent implements OnInit {
-  // Configuration
+  // Building configuration
   buildingWidth = 20;
   buildingHeight = 20;
   buildingFloors = 3;
-  
-  testAStar = true;
-  testDijkstra = true;
-  
+
   // Test scenarios
   testScenarios: TestScenario[] = [
     {
-      name: 'Ground Floor Fire',
-      description: 'Fire starts on ground floor, people on upper floors',
+      name: "Ground Floor Fire",
+      description: "Fire starts on ground floor, testing basic evacuation",
       firePosition: { x: 5, y: 5, floor: 0 },
       personPositions: [
+        { x: 10, y: 10, floor: 0 },
         { x: 15, y: 15, floor: 1 },
-        { x: 8, y: 12, floor: 2 },
-        { x: 12, y: 8, floor: 1 }
+        { x: 8, y: 12, floor: 2 }
       ]
     },
     {
-      name: 'Central Fire',
-      description: 'Fire blocks main stairwell area',
+      name: "Multi-Floor Fire",
+      description: "Fire spreads across multiple floors",
       firePosition: { x: 10, y: 10, floor: 1 },
       personPositions: [
         { x: 5, y: 5, floor: 0 },
-        { x: 15, y: 15, floor: 2 },
-        { x: 3, y: 17, floor: 1 }
+        { x: 15, y: 15, floor: 1 },
+        { x: 8, y: 12, floor: 2 }
       ]
     },
     {
-      name: 'Top Floor Fire',
-      description: 'Fire starts on top floor, affects evacuation routes',
-      firePosition: { x: 15, y: 15, floor: 2 },
+      name: "Exit Blocked",
+      description: "Fire blocks primary exit, testing alternate routes",
+      firePosition: { x: 18, y: 18, floor: 0 },
       personPositions: [
-        { x: 5, y: 5, floor: 2 },
-        { x: 8, y: 12, floor: 1 },
-        { x: 12, y: 8, floor: 0 }
+        { x: 5, y: 5, floor: 0 },
+        { x: 10, y: 10, floor: 1 }
       ]
     },
     {
-      name: 'Multiple Exits Test',
-      description: 'Test pathfinding with multiple available exits',
-      firePosition: { x: 8, y: 8, floor: 0 },
+      name: "High Traffic",
+      description: "Multiple people evacuating simultaneously",
+      firePosition: { x: 8, y: 8, floor: 1 },
       personPositions: [
         { x: 3, y: 3, floor: 0 },
-        { x: 17, y: 17, floor: 0 },
-        { x: 10, y: 15, floor: 1 }
+        { x: 7, y: 7, floor: 0 },
+        { x: 12, y: 12, floor: 1 },
+        { x: 16, y: 16, floor: 1 },
+        { x: 5, y: 15, floor: 2 }
       ]
     }
   ];
-  
+
   selectedScenarios = new Set<number>([0, 1]); // Default selection
-  
-  // Analysis state
+
+  // Algorithm selection
+  testAStar = true;
+  testDijkstra = true;
+  testBFS = false;
+  testDFS = false;
+  testGreedy = false;
+
   isRunning = false;
   progress = 0;
   progressText = '';
@@ -590,10 +507,10 @@ export class AnalysisComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Initialize with default building
+    // Initialize building service
     this.buildingService.initializeBuilding(
-      this.buildingWidth, 
-      this.buildingHeight, 
+      this.buildingWidth,
+      this.buildingHeight,
       this.buildingFloors
     );
   }
@@ -607,67 +524,77 @@ export class AnalysisComponent implements OnInit {
   }
 
   async runAnalysis(): Promise<void> {
-    if (this.isRunning || this.selectedScenarios.size === 0) return;
-    
+    if (this.isRunning) return;
+
     this.isRunning = true;
     this.progress = 0;
     this.comparisonResults = [];
-    
-    // Regenerate building for consistent testing
-    this.buildingService.initializeBuilding(
-      this.buildingWidth, 
-      this.buildingHeight, 
-      this.buildingFloors
-    );
-    
-    const selectedScenarioIndices = Array.from(this.selectedScenarios);
-    const totalTests = selectedScenarioIndices.length;
-    
-    for (let i = 0; i < selectedScenarioIndices.length; i++) {
-      const scenarioIndex = selectedScenarioIndices[i];
-      const scenario = this.testScenarios[scenarioIndex];
-      
-      this.progressText = `Testing scenario: ${scenario.name}`;
-      this.progress = (i / totalTests) * 100;
-      
-      // Small delay to show progress
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      const result = await this.testScenario(scenario);
-      this.comparisonResults.push(result);
+
+    const selectedAlgorithms = this.getSelectedAlgorithms();
+    const selectedScenarios = Array.from(this.selectedScenarios).map(i => this.testScenarios[i]);
+
+    const totalTests = selectedScenarios.length * selectedAlgorithms.length;
+    let completedTests = 0;
+
+    try {
+      for (const scenario of selectedScenarios) {
+        this.progressText = `Testing scenario: ${scenario.name}`;
+        
+        const result = await this.testScenario(scenario);
+        this.comparisonResults.push(result);
+        
+        completedTests += selectedAlgorithms.length;
+        this.progress = (completedTests / totalTests) * 100;
+      }
+
+      this.progressText = 'Analysis completed!';
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      this.progressText = 'Analysis failed!';
+    } finally {
+      this.isRunning = false;
     }
-    
-    this.progress = 100;
-    this.progressText = 'Analysis complete!';
-    this.isRunning = false;
+  }
+
+  private getSelectedAlgorithms(): string[] {
+    const algorithms: string[] = [];
+    if (this.testAStar) algorithms.push('A*');
+    if (this.testDijkstra) algorithms.push('Dijkstra');
+    if (this.testBFS) algorithms.push('BFS');
+    if (this.testDFS) algorithms.push('DFS');
+    if (this.testGreedy) algorithms.push('Greedy BFS');
+    return algorithms;
   }
 
   private async testScenario(scenario: TestScenario): Promise<ComparisonResult> {
-    // Reset building and add fire
-    this.buildingService.resetSimulation();
+    // Reset building
+    this.buildingService.initializeBuilding(
+      this.buildingWidth,
+      this.buildingHeight,
+      this.buildingFloors
+    );
+
+    // Start fire
     this.buildingService.startFire(scenario.firePosition);
-    
+
+    // Add people
+    scenario.personPositions.forEach(pos => {
+      this.buildingService.addPerson(pos);
+    });
+
     const buildingMap = this.buildingService.getBuildingMap();
     const exits = this.buildingService.getExitPositions();
-    
+    const selectedAlgorithms = this.getSelectedAlgorithms();
+
     const results: AlgorithmResult[] = [];
-    
-    // Test each algorithm
-    for (const personPos of scenario.personPositions) {
-      if (this.testAStar) {
-        const astarResult = await this.testAlgorithm('A*', personPos, exits, buildingMap);
-        results.push(astarResult);
-      }
-      
-      if (this.testDijkstra) {
-        const dijkstraResult = await this.testAlgorithm('Dijkstra', personPos, exits, buildingMap);
-        results.push(dijkstraResult);
-      }
+
+    for (const algorithmName of selectedAlgorithms) {
+      const result = await this.testAlgorithm(algorithmName, scenario.personPositions[0], exits, buildingMap);
+      results.push(result);
     }
-    
-    // Determine winner (algorithm with best average performance)
+
     const winner = this.determineWinner(results);
-    
+
     return {
       scenario: scenario.name,
       results,
@@ -681,102 +608,131 @@ export class AnalysisComponent implements OnInit {
     exits: Position[], 
     buildingMap: number[][][]
   ): Promise<AlgorithmResult> {
-    let bestPath: Position[] | null = null;
-    let totalTime = 0;
-    
-    // Test pathfinding to each exit and pick the best
-    for (const exit of exits) {
-      const startTime = performance.now();
-      
-      let path: Position[] | null = null;
-      if (algorithmName === 'A*') {
-        path = this.pathfindingService.findPathAStar(startPos, exit, buildingMap);
-      } else if (algorithmName === 'Dijkstra') {
-        path = this.pathfindingService.findPathDijkstra(startPos, exit, buildingMap);
+    const startTime = performance.now();
+    let path: Position[] | null = null;
+    let pathFound = false;
+
+    try {
+      // Find closest exit
+      let bestPath: Position[] | null = null;
+      let minDistance = Infinity;
+
+      for (const exit of exits) {
+        let currentPath: Position[] | null = null;
+
+        switch (algorithmName) {
+          case "A*":
+            currentPath = this.pathfindingService.findPathAStar(startPos, exit, buildingMap);
+            break;
+          case "Dijkstra":
+            currentPath = this.pathfindingService.findPathDijkstra(startPos, exit, buildingMap);
+            break;
+          case "BFS":
+            currentPath = this.pathfindingService.findPathBFS(startPos, exit, buildingMap);
+            break;
+          case "DFS":
+            currentPath = this.pathfindingService.findPathDFS(startPos, exit, buildingMap);
+            break;
+          case "Greedy BFS":
+            currentPath = this.pathfindingService.findPathGreedyBestFirst(startPos, exit, buildingMap);
+            break;
+          default:
+            currentPath = null;
+        }
+
+        if (currentPath && currentPath.length < minDistance) {
+          minDistance = currentPath.length;
+          bestPath = currentPath;
+        }
       }
-      
-      const endTime = performance.now();
-      totalTime += endTime - startTime;
-      
-      if (path && (!bestPath || path.length < bestPath.length)) {
-        bestPath = path;
-      }
+
+      path = bestPath;
+      pathFound = path !== null;
+
+    } catch (error) {
+      console.error(`Error testing ${algorithmName}:`, error);
+      pathFound = false;
     }
-    
-    const pathStats = bestPath ? this.pathfindingService.calculatePathStats(bestPath) : {
-      length: 0,
-      floorChanges: 0,
-      estimatedTime: 0
-    };
-    
+
+    const executionTime = performance.now() - startTime;
+
+    let pathLength = 0;
+    let floorChanges = 0;
+    let estimatedTime = 0;
+
+    if (path && path.length > 0) {
+      pathLength = path.length;
+      const stats = this.pathfindingService.calculatePathStats(path);
+      floorChanges = stats.floorChanges;
+      estimatedTime = stats.estimatedTime;
+    }
+
     return {
       algorithm: algorithmName,
-      pathLength: pathStats.length,
-      executionTime: totalTime,
-      pathFound: bestPath !== null,
-      floorChanges: pathStats.floorChanges,
-      estimatedTime: pathStats.estimatedTime
+      pathLength,
+      executionTime,
+      pathFound,
+      floorChanges,
+      estimatedTime
     };
   }
 
   private determineWinner(results: AlgorithmResult[]): string {
-    const algorithmScores = new Map<string, number>();
+    const successfulResults = results.filter(r => r.pathFound);
     
-    // Group results by algorithm
-    const algorithmGroups = new Map<string, AlgorithmResult[]>();
-    for (const result of results) {
-      if (!algorithmGroups.has(result.algorithm)) {
-        algorithmGroups.set(result.algorithm, []);
-      }
-      algorithmGroups.get(result.algorithm)!.push(result);
+    if (successfulResults.length === 0) {
+      return 'None';
     }
+
+    // Sort by execution time (faster is better)
+    successfulResults.sort((a, b) => a.executionTime - b.executionTime);
     
-    // Calculate average scores for each algorithm
-    for (const [algorithm, algorithmResults] of algorithmGroups) {
-      const validResults = algorithmResults.filter(r => r.pathFound);
-      if (validResults.length === 0) {
-        algorithmScores.set(algorithm, Infinity);
-        continue;
-      }
-      
-      const avgTime = validResults.reduce((sum, r) => sum + r.executionTime, 0) / validResults.length;
-      const avgLength = validResults.reduce((sum, r) => sum + r.pathLength, 0) / validResults.length;
-      
-      // Combined score (lower is better)
-      const score = avgTime + avgLength * 10; // Weight path length more heavily
-      algorithmScores.set(algorithm, score);
-    }
-    
-    // Find algorithm with lowest score
-    let winner = '';
-    let bestScore = Infinity;
-    
-    for (const [algorithm, score] of algorithmScores) {
-      if (score < bestScore) {
-        bestScore = score;
-        winner = algorithm;
-      }
-    }
-    
-    return winner;
+    return successfulResults[0].algorithm;
   }
 
-  // Summary statistics methods
   getTotalTests(): number {
-    return this.comparisonResults.length;
+    return this.comparisonResults.reduce((total, result) => total + result.results.length, 0);
   }
 
-  getAlgorithmWins(algorithm: string): number {
-    return this.comparisonResults.filter(r => r.winner === algorithm).length;
+  getSuccessfulPaths(): number {
+    return this.comparisonResults.reduce((total, result) => 
+      total + result.results.filter(r => r.pathFound).length, 0);
   }
 
-  getAverageTime(algorithm: string): number {
+  getFastestAlgorithm(): string {
     const allResults = this.comparisonResults.flatMap(r => r.results);
-    const algorithmResults = allResults.filter(r => r.algorithm === algorithm && r.pathFound);
+    const successful = allResults.filter(r => r.pathFound);
     
-    if (algorithmResults.length === 0) return 0;
+    if (successful.length === 0) return 'None';
     
-    const totalTime = algorithmResults.reduce((sum, r) => sum + r.executionTime, 0);
-    return totalTime / algorithmResults.length;
+    const fastest = successful.reduce((min, current) => 
+      current.executionTime < min.executionTime ? current : min);
+    
+    return fastest.algorithm;
+  }
+
+  getMostReliableAlgorithm(): string {
+    const allResults = this.comparisonResults.flatMap(r => r.results);
+    const algorithmStats = new Map<string, { success: number; total: number }>();
+    
+    allResults.forEach(result => {
+      const stats = algorithmStats.get(result.algorithm) || { success: 0, total: 0 };
+      stats.total++;
+      if (result.pathFound) stats.success++;
+      algorithmStats.set(result.algorithm, stats);
+    });
+    
+    let mostReliable = 'None';
+    let bestRate = 0;
+    
+    algorithmStats.forEach((stats, algorithm) => {
+      const rate = stats.success / stats.total;
+      if (rate > bestRate) {
+        bestRate = rate;
+        mostReliable = algorithm;
+      }
+    });
+    
+    return mostReliable;
   }
 }
