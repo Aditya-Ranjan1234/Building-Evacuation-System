@@ -54,6 +54,7 @@ body {
   padding: 1.5rem;
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+  max-height: 100vh;
   z-index: 100;
   
   .control-section {
@@ -151,16 +152,29 @@ body {
   }
 }
 
+.simulation-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
 .visualization-container {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.three-container {
+  width: 100%;
+  height: 100%;
   position: relative;
-  background: #000;
-  
-  canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
 }
 
 .loading {

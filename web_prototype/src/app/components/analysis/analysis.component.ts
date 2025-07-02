@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { BuildingService } from '../../services/building.service';
-import { PathfindingService, Position } from '../../services/pathfinding.service';
+import { PathfindingService, Position, CellType } from '../../services/pathfinding.service';
 
 interface AlgorithmResult {
   algorithm: string;
@@ -87,6 +87,14 @@ interface ComparisonResult {
               <label class="checkbox-item">
                 <input type="checkbox" [(ngModel)]="testGreedy">
                 <span>Greedy Best-First Search</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" [(ngModel)]="testBidirectional">
+                <span>Bidirectional Search</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" [(ngModel)]="testWeightedAStar">
+                <span>Weighted A*</span>
               </label>
             </div>
           </div>
@@ -495,6 +503,8 @@ export class AnalysisComponent implements OnInit {
   testBFS = false;
   testDFS = false;
   testGreedy = false;
+  testBidirectional = false;
+  testWeightedAStar = false;
 
   isRunning = false;
   progress = 0;
@@ -507,12 +517,56 @@ export class AnalysisComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Initialize building service
-    this.buildingService.initializeBuilding(
-      this.buildingWidth,
-      this.buildingHeight,
-      this.buildingFloors
-    );
+    this.initializeTestScenarios();
+    // Automatically run analysis on init if no results are present
+    if (this.comparisonResults.length === 0) {
+      this.runAnalysis();
+    }
+  }
+
+  trackByScenario(index: number, scenario: TestScenario): string {
+    return scenario.name + index;
+  }
+
+  trackByComparisonResult(index: number, result: ComparisonResult): string {
+    return result.scenario + index;
+  }
+
+  trackByAlgorithmResult(index: number, result: AlgorithmResult): string {
+    return result.algorithm + index;
+  }
+
+  /**
+   * Prepare test scenarios. If scenarios are already defined (e.g. via the
+   * default hard-coded list above) we leave them untouched. This prevents the
+   * placeholder array that previously overrode the real scenarios from wiping
+   * them out and breaking the analysis view.
+   */
+  initializeTestScenarios(): void {
+    if (this.testScenarios.length === 0) {
+      // Fallback in case the default scenarios are ever removed.
+      this.testScenarios = [
+        {
+          name: 'Default Scenario',
+          description: 'Fallback scenario when none provided',
+          firePosition: { x: 5, y: 5, floor: 0 },
+          personPositions: [{ x: 10, y: 10, floor: 0 }]
+        }
+      ];
+    }
+
+    // Ensure the selectedScenarios set reflects current scenarios
+    this.selectedScenarios.clear();
+    this.testScenarios.forEach((_, i) => this.selectedScenarios.add(i));
+
+    // Ensure at least A* and Dijkstra are enabled by default; leave others off by default
+    this.testAStar = true;
+    this.testDijkstra = true;
+    this.testBFS = false;
+    this.testDFS = false;
+    this.testGreedy = false;
+    this.testBidirectional = false;
+    this.testWeightedAStar = false;
   }
 
   toggleScenario(index: number): void {
@@ -529,6 +583,7 @@ export class AnalysisComponent implements OnInit {
     this.isRunning = true;
     this.progress = 0;
     this.comparisonResults = [];
+    let relocatedPeople = false;
 
     const selectedAlgorithms = this.getSelectedAlgorithms();
     const selectedScenarios = Array.from(this.selectedScenarios).map(i => this.testScenarios[i]);
@@ -539,15 +594,59 @@ export class AnalysisComponent implements OnInit {
     try {
       for (const scenario of selectedScenarios) {
         this.progressText = `Testing scenario: ${scenario.name}`;
+
+        // Reset building
+        this.buildingService.initializeBuilding(
+          this.buildingWidth,
+          this.buildingHeight,
+          this.buildingFloors
+        );
+
+        // Start fire
+        this.buildingService.startFire(scenario.firePosition);
+
+        // Add people, relocating if needed
+        scenario.personPositions.forEach(pos => {
+          let validPos = { ...pos };
+          const map = this.buildingService.getBuildingMap();
+          const cellType = map[validPos.x]?.[validPos.y]?.[validPos.floor];
+          if (cellType !== CellType.WALKABLE) {
+            // Find nearest walkable cell in the entire building
+            let minDist = Infinity;
+            let foundPos = null;
+            for (let x = 0; x < this.buildingWidth; x++) {
+              for (let y = 0; y < this.buildingHeight; y++) {
+                for (let f = 0; f < this.buildingFloors; f++) {
+                  if (map[x]?.[y]?.[f] === CellType.WALKABLE) {
+                    const dist = Math.abs(x - pos.x) + Math.abs(y - pos.y) + Math.abs(f - pos.floor);
+                    if (dist < minDist) {
+                      minDist = dist;
+                      foundPos = { x, y, floor: f };
+                    }
+                  }
+                }
+              }
+            }
+            if (foundPos) {
+              validPos = foundPos;
+              relocatedPeople = true;
+            } else {
+              // No walkable cell found, skip this person
+              return;
+            }
+          }
+          this.buildingService.addPerson(validPos);
+        });
         
         const result = await this.testScenario(scenario);
         this.comparisonResults.push(result);
-        
         completedTests += selectedAlgorithms.length;
         this.progress = (completedTests / totalTests) * 100;
       }
-
       this.progressText = 'Analysis completed!';
+      if (relocatedPeople) {
+        alert('Some people were relocated to the nearest walkable cell for analysis.');
+      }
     } catch (error) {
       console.error('Analysis failed:', error);
       this.progressText = 'Analysis failed!';
@@ -563,9 +662,17 @@ export class AnalysisComponent implements OnInit {
     if (this.testBFS) algorithms.push('BFS');
     if (this.testDFS) algorithms.push('DFS');
     if (this.testGreedy) algorithms.push('Greedy BFS');
+    if (this.testBidirectional) algorithms.push('Bidirectional');
+    if (this.testWeightedAStar) algorithms.push('Weighted A*');
     return algorithms;
   }
 
+  /**
+   * Execute algorithm tests for a given scenario. This function now performs
+   * person-placement validation (relocation if needed) in the same way as the
+   * outer loop so that we don’t attempt to spawn people on non-walkable cells
+   * when the scenario is executed individually.
+   */
   private async testScenario(scenario: TestScenario): Promise<ComparisonResult> {
     // Reset building
     this.buildingService.initializeBuilding(
@@ -577,9 +684,36 @@ export class AnalysisComponent implements OnInit {
     // Start fire
     this.buildingService.startFire(scenario.firePosition);
 
-    // Add people
+    // Add people (relocate if starting cell isn’t walkable)
     scenario.personPositions.forEach(pos => {
-      this.buildingService.addPerson(pos);
+      let validPos = { ...pos };
+      const map = this.buildingService.getBuildingMap();
+      const cellType = map[validPos.x]?.[validPos.y]?.[validPos.floor];
+      if (cellType !== CellType.WALKABLE && cellType !== CellType.STAIRS && cellType !== CellType.EXIT) {
+        // Find nearest walkable cell in the entire building
+        let minDist = Infinity;
+        let foundPos: Position | null = null;
+        for (let x = 0; x < this.buildingWidth; x++) {
+          for (let y = 0; y < this.buildingHeight; y++) {
+            for (let f = 0; f < this.buildingFloors; f++) {
+              if (map[x]?.[y]?.[f] === CellType.WALKABLE || map[x]?.[y]?.[f] === CellType.STAIRS || map[x]?.[y]?.[f] === CellType.EXIT) {
+                const dist = Math.abs(x - pos.x) + Math.abs(y - pos.y) + Math.abs(f - pos.floor);
+                if (dist < minDist) {
+                  minDist = dist;
+                  foundPos = { x, y, floor: f };
+                }
+              }
+            }
+          }
+        }
+        if (foundPos) {
+          validPos = foundPos;
+        } else {
+          // No walkable cell found – skip this person
+          return;
+        }
+      }
+      this.buildingService.addPerson(validPos);
     });
 
     const buildingMap = this.buildingService.getBuildingMap();
@@ -635,6 +769,12 @@ export class AnalysisComponent implements OnInit {
             break;
           case "Greedy BFS":
             currentPath = this.pathfindingService.findPathGreedyBestFirst(startPos, exit, buildingMap);
+            break;
+          case "Bidirectional":
+            currentPath = this.pathfindingService.findPathBidirectional(startPos, exit, buildingMap);
+            break;
+          case "Weighted A*":
+            currentPath = this.pathfindingService.findPathAStarWeighted(startPos, exit, buildingMap, 1.5);
             break;
           default:
             currentPath = null;

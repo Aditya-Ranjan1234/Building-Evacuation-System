@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, interval, Subscription } from 'rxjs';
-import { Position, CellType } from './pathfinding.service';
+import { Position, CellType, PathfindingService } from './pathfinding.service';
 
 // Local CellType enum for consistency
 enum LocalCellType {
@@ -20,6 +20,7 @@ export interface Person {
   currentPathIndex: number;
   isEvacuated: boolean;
   movementSpeed: number;
+  trapped?: boolean;
 }
 
 export interface BuildingStats {
@@ -69,7 +70,9 @@ export class BuildingService {
   private fireSpreadRate = 0.1; // Probability of fire spreading per timestep
   private simulationSpeed = 1000; // Milliseconds per timestep
 
-  constructor() {
+  constructor(
+    private pathfindingService: PathfindingService
+  ) {
     this.initializeBuilding(20, 20, 3);
   }
 
@@ -253,7 +256,7 @@ export class BuildingService {
     const cellType = this.buildingMap[position.x][position.y][position.floor];
     console.log('BuildingService: Cell type at position:', cellType);
 
-    if (cellType !== CellType.WALKABLE) {
+    if (cellType !== CellType.WALKABLE && cellType !== CellType.STAIRS && cellType !== CellType.EXIT) {
       console.error('Position is not walkable:', position, 'Cell type:', cellType);
       throw new Error(`Position is not walkable (cell type: ${cellType})`);
     }
@@ -303,7 +306,7 @@ export class BuildingService {
    */
   private movePeople(): void {
     for (const person of this.people) {
-      if (person.isEvacuated || person.path.length === 0) {
+      if (person.isEvacuated || person.path.length === 0 || person.trapped) {
         continue;
       }
 
@@ -311,15 +314,27 @@ export class BuildingService {
       if (person.currentPathIndex < person.path.length - 1) {
         const nextIndex = person.currentPathIndex + person.movementSpeed;
         const targetIndex = Math.min(nextIndex, person.path.length - 1);
-        
-        // Check if next position is safe (not on fire)
         const nextPosition = person.path[targetIndex];
         const { x, y, floor } = nextPosition;
         
         // Don't move if next position is on fire
         if (this.buildingMap[x][y][floor] === CellType.FIRE) {
-          // Try to find alternate path or stay in place
-          console.log(`Person ${person.name} blocked by fire at ${x},${y},${floor}`);
+          // Try to find alternate path to any exit
+          const exits = this.getExitPositions();
+          let foundPath = false;
+          for (const exit of exits) {
+            const newPath = this.pathfindingService.findPathAStar(person.position, exit, this.buildingMap);
+            if (newPath && newPath.length > 1 && !newPath.some((pos: Position) => this.buildingMap[pos.x][pos.y][pos.floor] === CellType.FIRE)) {
+              person.path = newPath;
+              person.currentPathIndex = 0;
+              foundPath = true;
+              break;
+            }
+          }
+          if (!foundPath) {
+            person.trapped = true;
+            console.warn(`Person ${person.name} is trapped and cannot escape!`);
+          }
           continue;
         }
         
@@ -514,25 +529,49 @@ export class BuildingService {
   }
 
   /**
-   * Recalculate paths for people whose current paths are blocked by fire
+   * Recalculate (or calculate) evacuation paths for people whose current paths are missing
+   * or have become blocked by fire. Attempts to find the safest *shortest* path to ANY exit.
+   * If no path can be found the person is marked as `trapped`.
    */
   recalculateBlockedPaths(): void {
+    const exits = this.getExitPositions();
+
     for (const person of this.people) {
-      if (person.isEvacuated || person.path.length === 0) {
+      if (person.isEvacuated) {
         continue;
       }
 
-      // Check if current path is blocked by fire
-      const isPathBlocked = person.path.some(pos => {
-        const { x, y, floor } = pos;
-        return this.buildingMap[x][y][floor] === CellType.FIRE;
-      });
+      // Determine whether the person needs a new path
+      const hasNoPath = person.path.length === 0;
+      const remainingPath = person.path.slice(person.currentPathIndex);
+      const pathBlocked = remainingPath.some(pos => this.buildingMap[pos.x][pos.y][pos.floor] === CellType.FIRE);
+      if (!hasNoPath && !pathBlocked) {
+        // Current path still looks safe – continue using it
+        continue;
+      }
 
-      if (isPathBlocked) {
-        console.log(`Recalculating path for ${person.name} - current path blocked by fire`);
-        // Clear current path so it can be recalculated
-        person.path = [];
+      console.log(`Recalculating path for ${person.name} – current path ${hasNoPath ? 'missing' : 'blocked'}`);
+
+      let bestPath: Position[] | null = null;
+      let shortest = Infinity;
+
+      for (const exit of exits) {
+        const candidate = this.pathfindingService.findPathAStar(person.position, exit, this.buildingMap);
+        if (candidate && !this.pathfindingService.isPathBlockedByFire(candidate, this.buildingMap)) {
+          if (candidate.length < shortest) {
+            bestPath = candidate;
+            shortest = candidate.length;
+          }
+        }
+      }
+
+      if (bestPath) {
+        person.path = bestPath;
         person.currentPathIndex = 0;
+        person.trapped = false;
+      } else {
+        // No viable path – mark as trapped so UI can indicate the issue
+        person.trapped = true;
       }
     }
   }

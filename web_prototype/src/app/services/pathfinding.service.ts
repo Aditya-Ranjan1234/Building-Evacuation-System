@@ -222,16 +222,14 @@ export class PathfindingService {
    * Check if position is valid and walkable
    */
   private isValidPosition(x: number, y: number, floor: number, buildingMap: number[][][]): boolean {
-    if (x < 0 || x >= buildingMap.length ||
-        y < 0 || y >= buildingMap[0].length ||
-        floor < 0 || floor >= buildingMap[0][0].length) {
+    if (!this.isValidMapPosition(x, y, floor, buildingMap)) {
       return false;
     }
-
     const cellType = buildingMap[x][y][floor];
     return cellType === CellType.WALKABLE ||
            cellType === CellType.STAIRS ||
            cellType === CellType.EXIT;
+    // Explicitly exclude FIRE from valid paths
   }
 
   /**
@@ -724,5 +722,14 @@ export class PathfindingService {
       visited.add(this.positionToKey(current));
     }
     return null;
+  }
+
+  /**
+   * Check if position is valid within map bounds
+   */
+  private isValidMapPosition(x: number, y: number, floor: number, buildingMap: number[][][]): boolean {
+    return x >= 0 && x < buildingMap.length &&
+           y >= 0 && y < buildingMap[0].length &&
+           floor >= 0 && floor < buildingMap[0][0].length;
   }
 }
