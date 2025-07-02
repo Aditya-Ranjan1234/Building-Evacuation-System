@@ -29,7 +29,9 @@ daa_see/
 │   │   │   └── pathfinding_enhanced.py  # All enhanced algorithms (17 total)
 │   │   ├── simulation/           # Fire spread and building models
 │   │   ├── visualization/        # 3D plotting and animation
-│   │   └── main.py              # Main application entry point
+│   │   ├── main.py              # Main application entry point
+│   │   └── main_headless.py     # Headless version for systems without display
+│   ├── test_display.py          # Test script for matplotlib display
 │   ├── requirements.txt
 │   └── README.md
 ├── web_prototype/                # Angular + Three.js prototype
@@ -49,32 +51,32 @@ daa_see/
 └── README.md
 ```
 
-## 🤖 Comprehensive Pathfinding Algorithms
+## 🤖 Pathfinding Algorithms
 
-### 📚 Basic Algorithms
-- **A* Algorithm**: Heuristic-based optimal pathfinding
-- **Dijkstra's Algorithm**: Guaranteed shortest path
-- **Breadth-First Search (BFS)**: Uniform cost, optimal for unweighted graphs
-- **Depth-First Search (DFS)**: Explores all routes (not optimal for shortest path)
-- **Greedy Best-First Search**: Uses heuristic, faster but not always optimal
+### Implemented in Both Prototypes (Python & Web)
+- **A\*** (A-star)
+- **Dijkstra's Algorithm**
+- **Breadth-First Search (BFS)**
+- **Depth-First Search (DFS)**
+- **Greedy Best-First Search**
+- **Bidirectional Search**
+- **Jump Point Search (JPS)**
+- **Theta\*** (Any-angle A\*)
+- **Fringe Search**
+- **Anytime A\*** (ARA\*, Weighted A\*)
+- **Ant Colony Optimization (ACO)**
+- **Genetic Algorithm (GA)**
+- **Swarm Intelligence**
 
-### 🚀 Advanced Algorithms
-- **Bidirectional Search**: Runs search from both source and goal
-- **Jump Point Search (JPS)**: Optimized A* for uniform-cost grids
-- **Theta***: Variant of A* allowing any-angle movement
-- **Fringe Search**: Memory-efficient alternative to A*
-- **RRT* Algorithm**: Continuous space exploration
+> These algorithms are available in both the Python (matplotlib) and Angular (web) prototypes, allowing for direct comparison and analysis across platforms.
 
-### ⚡ Dynamic/Real-time Algorithms
-- **D* (Dynamic A*)**: Recalculates path when environment changes
-- **D* Lite**: Simplified and faster version of D*
-- **LPA* (Lifelong Planning A*)**: Keeps data between path changes
-- **Anytime A* / ARA***: Returns good-enough path quickly and improves over time
+### Python (Matplotlib) Prototype Only
+- **D\*** (Dynamic A\*)
+- **D\* Lite**
+- **LPA\*** (Lifelong Planning A\*)
+- **RRT\*** (Rapidly-exploring Random Tree Star)
 
-### 🧠 Bio-Inspired/Evolutionary Algorithms
-- **Ant Colony Optimization (ACO)**: Agents find optimal paths via pheromone trails
-- **Genetic Algorithms (GA)**: Evolves a set of possible paths
-- **Swarm Intelligence**: Models collective behavior for crowd evacuation
+> These advanced and dynamic algorithms are implemented only in the Python prototype, offering additional research and benchmarking capabilities for dynamic and continuous environments.
 
 ## 🚀 Getting Started
 
@@ -84,7 +86,7 @@ daa_see/
 - **Python**: 3.7 or higher
 - **pip**: Python package installer
 - **RAM**: 4GB minimum, 8GB recommended
-- **Display**: OpenGL-capable graphics
+- **Display**: OpenGL-capable graphics (or use headless mode)
 
 #### For Web Prototype
 - **Node.js**: 18.0 or higher
@@ -134,9 +136,18 @@ The script will:
    pip install -r requirements.txt
    ```
 
-4. **Run the application:**
+4. **Test matplotlib display:**
    ```bash
+   python test_display.py
+   ```
+
+5. **Run the application:**
+   ```bash
+   # Interactive mode (requires display)
    python src/main.py
+   
+   # Headless mode (no display required)
+   python src/main_headless.py
    ```
 
 #### 🌐 Web Prototype Setup
@@ -167,7 +178,7 @@ The script will:
 
 #### Matplotlib Prototype Usage
 
-1. **Interactive Mode** (Recommended)
+1. **Interactive Mode** (Recommended - requires display)
    - Run `python src/main.py`
    - Select "Interactive Mode" from menu
    - Click on building to place fire
@@ -178,15 +189,22 @@ The script will:
      - **C**: Calculate paths
      - **H**: Show help
 
-2. **Demo Scenario**
-   - Run `python src/main.py`
+2. **Headless Mode** (No display required)
+   - Run `python src/main_headless.py`
+   - Select from menu options:
+     - Demo Scenario
+     - Algorithm Analysis
+     - Save Current State
+
+3. **Demo Scenario**
+   - Run `python src/main.py` or `python src/main_headless.py`
    - Select "Demo Scenario" from menu
    - Watch predefined fire scenario
 
-3. **Algorithm Analysis**
-   - Run `python src/main.py`
+4. **Algorithm Analysis**
+   - Run `python src/main.py` or `python src/main_headless.py`
    - Select "Algorithm Analysis" from menu
-   - Compare performance of all algorithms
+   - Compare performance of all 17 algorithms
 
 #### Web Prototype Usage
 
@@ -285,14 +303,73 @@ This project focuses on real-time route optimization in emergency scenarios, dem
 ### Common Issues
 
 #### Matplotlib Prototype
-- **Import Errors**: Ensure virtual environment is activated and dependencies installed
-- **Display Issues**: Update matplotlib and check backend configuration
-- **Performance Issues**: Reduce building size or increase animation interval
+
+**Display Issues:**
+```bash
+# Test if matplotlib works
+python test_display.py
+
+# If display doesn't work, use headless mode
+python src/main_headless.py
+
+# Install tkinter (Linux)
+sudo apt-get install python3-tk
+
+# On Windows, ensure you have a GUI environment
+```
+
+**Import Errors:**
+```bash
+# Ensure virtual environment is activated
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+# Reinstall dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+**Performance Issues:**
+```bash
+# Reduce building size for better performance
+# Use simpler algorithms for large buildings
+# Increase animation interval
+```
 
 #### Web Prototype
-- **Node.js Version**: Ensure Node.js 18+ is installed
-- **Port Conflicts**: Change port with `ng serve --port 4201`
-- **Build Issues**: Clear cache with `npm cache clean --force`
+
+**Node.js Version Issues:**
+```bash
+# Ensure Node.js 18+ is installed
+node --version
+
+# Update Node.js if needed
+# Download from https://nodejs.org/
+```
+
+**Port Conflicts:**
+```bash
+# Change port if 4200 is busy
+ng serve --port 4201
+# Then open http://localhost:4201
+```
+
+**Build Issues:**
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Reinstall dependencies
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**TypeScript Errors:**
+```bash
+# The TypeScript error has been fixed in the latest version
+# If you still see errors, restart the development server
+npm start
+```
 
 ### System Requirements
 
@@ -300,6 +377,12 @@ This project focuses on real-time route optimization in emergency scenarios, dem
 - **Memory**: 4GB minimum, 8GB recommended
 - **Storage**: 2GB free space
 - **Network**: Required for npm packages (first run only)
+
+### Display Requirements
+
+- **Interactive Mode**: Requires GUI environment (X11, Windows GUI, macOS GUI)
+- **Headless Mode**: No display required, saves images to files
+- **Web Mode**: Requires modern web browser
 
 ## 📚 Documentation
 

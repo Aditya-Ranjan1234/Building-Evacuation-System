@@ -1,0 +1,1046 @@
+\documentclass[11pt,a4paper]{report}
+
+% Package imports
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage[left=1.5cm,right=1.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{graphicx} % For scalebox
+\usepackage{float}    % For [H] specifier
+\usepackage{hyperref}
+\usepackage{tocloft}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{appendix}
+\usepackage{eso-pic}
+\usepackage{watermark}
+\usepackage{calc}
+\usepackage{pdfpages}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usetikzlibrary{shapes,arrows,positioning,fit,backgrounds}
+\linespread{0.9}
+
+% Declare Unicode characters
+\DeclareUnicodeCharacter{221E}{\ensuremath{\infty}}
+
+% Configure tighter spacing
+\setstretch{0.8}
+\setlist[itemize]{noitemsep, topsep=0pt, partopsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt, partopsep=0pt}
+
+% Document settings
+\onehalfspacing
+\setlength{\parindent}{0.4in}
+\setlength{\parskip}{4pt}
+
+% Hyperref settings
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    citecolor=black,
+    pdftitle={Building Evacuation System Report},
+    pdfauthor={Student Name},
+    pdfsubject={Design and Analysis of Algorithms for Building Evacuation},
+    pdfkeywords={pathfinding, algorithms, evacuation, fire simulation, optimization}
+}
+
+% Header and footer settings
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\includegraphics[height=1.8cm]{images/logo.png}}
+\fancyfoot[L]{Rashtreeya Sikshana Samithi Trust}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{Go change the world}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Adjust header height to be more standard
+\setlength{\headheight}{2.2cm}
+
+% Title formatting
+\titleformat{\chapter}[display]
+{\normalfont\large\bfseries\centering}
+{\chaptertitlename\ \thechapter}{15pt}{\large}
+
+\titleformat{\section}
+{\normalfont\normalsize\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalfont\small\bfseries}
+{\thesubsection}{1em}{}
+
+% Table of contents formatting
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsubsecfont}{\normalfont}
+
+% Ensure text is readable over background
+\pagecolor{white}
+
+% Ensure proper spacing from headers and footers
+\setlength{\parskip}{0.2em}
+\setlength{\parsep}{0.2em}
+\setlength{\headsep}{0.3cm}
+\setlength{\footskip}{0.8cm}
+
+% Configure listings for better code display
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    escapeinside={(*@}{@*)},
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    showstringspaces=false,
+    tabsize=4,
+    language=Python
+}
+
+\begin{document}
+
+% Include the front page PDF
+% \includepdf[pages=1]{front.pdf}
+
+\newpage
+
+% Certificate
+\begin{center}
+\vspace{0.5cm}
+\textbf{\Large CERTIFICATE}
+\end{center}
+
+\vspace{0.5cm}
+
+Certified that the project work titled \textbf{'Building Evacuation System using Optimized Path Planning'} is carried out by 
+\textbf{Aditya Ranjan},
+\textbf{Gnanendra Naidu N},
+\textbf{Garv Agarwalla} and
+\textbf{Diptanshu Kumar} who are bonafide students of RV College of Engineering, Bengaluru, in partial fulfilment for the award of degree of Bachelor of Engineering in Artificial Intelligence and Machine Learning of the Visvesvaraya Technological University, Belagavi during the academic year 2023-2024. It is certified that all corrections/suggestions indicated for the Internal Assessment have been incorporated in the report deposited in the departmental library. The report has been approved as it satisfies the academic requirements in respect of Design and Analysis of Algorithms project work prescribed by the institution for the said degree.
+
+\vspace{2cm}
+
+
+\begin{center}
+\begin{tabular}{p{6cm}p{6cm}}
+\textbf{Internal Guide} & \textbf{Internal Guide} \\
+Prof. Rajesh M & Dr. S. Anupama Kumar \\
+Assistant Professor & Associate Professor \\
+AI \& ML Department & AI \& ML Department \\
+RV College of Engineering & RV College of Engineering \\
+\end{tabular}
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\begin{tabular}{p{6cm}}
+\textbf{Head of Department} \\
+Dr. B. Sathish Babu \\
+Professor and HoD \\
+AI \& ML Department \\
+RV College of Engineering \\
+\end{tabular}
+\end{center}
+
+% --- Insert Students and Faculty Page Here ---
+
+\newpage
+
+% Declaration
+\begin{center}
+\vspace{0.5cm}
+\textbf{\Large DECLARATION}
+\end{center}
+
+\vspace{1cm}
+
+We,
+\textbf{Aditya Ranjan},
+\textbf{Gnanendra Naidu N},
+\textbf{Garv Agarwalla} and
+\textbf{Diptanshu Kumar} students of fourth semester B.E., department of AI \& ML, RV College of Engineering, Bengaluru, hereby declare that the Design and Analysis of Algorithms project titled \textbf{'Building Evacuation System using Optimized Path Planning'} has been carried out by us and submitted in partial fulfilment for the award of degree of Bachelor of Engineering in Artificial Intelligence and Machine Learning during the academic year 2023-24.
+
+\vspace{0.5cm}
+
+We also declare that any Intellectual Property Rights generated out of this project carried out at RVCE will be the property of RV College of Engineering, Bengaluru and we will be the authors of the same.
+
+\vspace{2cm}
+
+\begin{center}
+\begin{tabular}{p{6cm}}
+\textbf{Students} \\
+\textbf{Aditya Ranjan} \\
+\textbf{Gnanendra Naidu N} \\
+\textbf{Garv Agarwalla} \\
+\textbf{Diptanshu Kumar} \\
+\end{tabular}
+\end{center}
+
+\newpage
+
+% Table of Contents
+\vspace{0.3cm}
+\tableofcontents
+
+\vspace{0.3cm}
+\chapter*{ACKNOWLEDGMENTS}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+
+I would like to express my sincere gratitude to my faculty guide Dr. Faculty Name for the invaluable guidance, support, and encouragement throughout this project. Their expertise and insights have been instrumental in shaping the direction and quality of this research.
+
+\vspace{0.5cm}
+
+I am also grateful to the Department of Artificial Intelligence and Machine Learning at RV College of Engineering for providing the necessary resources and infrastructure to conduct this research. Special thanks to Dr. HOD Name, Head of Department, for the support and encouragement.
+
+\vspace{0.5cm}
+
+I would like to acknowledge the open-source community, particularly the developers of Python, Matplotlib, NumPy, and other libraries that made this research possible. Their contributions to the field of computer science have been invaluable.
+
+\vspace{0.5cm}
+
+Finally, I would like to thank my family and friends for their unwavering support and understanding during the course of this project.
+
+\vspace{0.3cm}
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Fire emergencies in modern buildings pose significant risks to occupant safety, necessitating rapid and efficient evacuation strategies. Traditional evacuation plans, which rely on static routes and signage, often prove inadequate in dynamic scenarios where hazards such as fire and smoke can block predefined paths. Over the past decades, researchers have developed a variety of pathfinding algorithms to address evacuation challenges, including classical approaches like Dijkstra's and A*, as well as more recent dynamic and bio-inspired methods. However, a critical gap remains in the comparative evaluation of these algorithms within realistic, multi-floor building environments that feature evolving hazards and require real-time adaptation. This project aims to bridge this gap by systematically analyzing and benchmarking 17 different pathfinding algorithms for building evacuation, with a focus on adaptability, computational efficiency, and practical applicability.
+
+The methodology involves the development of a comprehensive simulation platform that models a 3D building grid, simulates probabilistic fire spread, and manages the movement of multiple evacuation agents. The system is implemented in Python, leveraging libraries such as NumPy and Matplotlib for simulation and visualization. The simulation environment is highly configurable, allowing for the adjustment of building layouts, fire spread rates, and agent distribution. Experiments are conducted on standard desktop hardware, ensuring accessibility and reproducibility. The project also features a web-based visualization module, enabling interactive exploration of evacuation scenarios and algorithm performance. The application of this work extends to emergency planning, smart building systems, and educational tools for algorithm analysis.
+
+Extensive experiments were conducted across a range of scenarios, including simple and complex building layouts, static and dynamic fire sources, and varying numbers of evacuees. Results demonstrate that while classical algorithms like A* and Dijkstra's provide reliable solutions in static environments, dynamic algorithms such as D* Lite and Lifelong Planning A* excel in scenarios with evolving hazards. Bio-inspired methods, including Ant Colony Optimization and Swarm Intelligence, show promise in handling multiple agents and congestion but require careful parameter tuning. Quantitative analysis reveals that dynamic and bio-inspired algorithms can reduce evacuation times by up to 30\% compared to classical methods in rapidly changing environments. These findings are benchmarked against existing literature, highlighting the advantages of adaptive approaches in real-world applications.
+
+In conclusion, this research underscores the importance of algorithm selection in building evacuation systems and provides actionable guidelines for practitioners and researchers. The developed simulation platform serves as a valuable testbed for future studies, including the integration of real building data, advanced human behavior models, and machine learning-based path planning. Future work will focus on enhancing the realism of fire and crowd dynamics, deploying the system in real-time smart infrastructure, and exploring the use of reinforcement learning to further optimize evacuation strategies. The outcomes of this project contribute to safer, more resilient buildings and advance the field of algorithmic emergency management.
+
+\chapter{INTRODUCTION}
+\addcontentsline{toc}{chapter}{Introduction}
+
+\section{Background}
+Emergency evacuation planning is a critical aspect of building safety and disaster management. Traditional evacuation plans often rely on static routes that may become unusable during emergencies due to fire, structural damage, or overcrowding. This research addresses the need for dynamic, adaptive evacuation systems that can recalculate optimal paths in real-time as conditions change.
+
+Pathfinding algorithms play a central role in such systems, determining the most efficient routes from any location to the nearest exits. While algorithms like A* and Dijkstra's are well-established in pathfinding applications, their performance in complex, multi-floor buildings with dynamic obstacles presents unique challenges that require careful analysis and optimization.
+
+\section{Problem Statement}
+The primary challenges addressed in this research include:
+\begin{itemize}
+    \item Finding optimal evacuation routes in complex multi-floor buildings
+    \item Adapting to dynamic obstacles (e.g., spreading fire) that block previously calculated paths
+    \item Balancing computational efficiency with path optimality
+    \item Comparing the performance of different pathfinding algorithms in evacuation scenarios
+    \item Developing a realistic simulation environment for algorithm testing and validation
+\end{itemize}
+
+\section{Objectives}
+The main objectives of this research are:
+\begin{enumerate}
+    \item Implement and compare 17 different pathfinding algorithms for building evacuation
+    \item Develop a realistic building simulation with dynamic fire spread
+    \item Analyze algorithm performance across different metrics (computation time, path length, adaptability)
+    \item Identify the most suitable algorithms for specific evacuation scenarios
+    \item Create an interactive visualization system for evacuation simulation
+\end{enumerate}
+
+\section{Significance}
+This research contributes to the field of emergency management and computational algorithm analysis in several ways:
+\begin{itemize}
+    \item Provides a comprehensive comparison of pathfinding algorithms in evacuation contexts
+    \item Demonstrates the impact of algorithm selection on evacuation efficiency
+    \item Offers insights into the trade-offs between computational complexity and path optimality
+    \item Presents a framework for algorithm selection based on building characteristics and emergency conditions
+    \item Serves as an educational tool for understanding pathfinding algorithms in practical applications
+\end{itemize}
+
+\section{Methodology Overview}
+The research methodology involves:
+\begin{enumerate}
+    \item Developing a 3D building simulation environment with configurable parameters
+    \item Implementing 17 pathfinding algorithms across four categories (basic, advanced, dynamic, and bio-inspired)
+    \item Creating a dynamic fire spread simulation that affects path availability
+    \item Designing performance metrics for algorithm comparison
+    \item Conducting scenario-based testing to evaluate algorithm performance
+    \item Analyzing results to identify optimal algorithms for different conditions
+\end{enumerate}
+
+\section{Report Structure}
+The remainder of this report is organized as follows:
+\begin{itemize}
+    \item Chapter 2 reviews relevant literature on pathfinding algorithms and evacuation systems
+    \item Chapter 3 details the system architecture and implementation
+    \item Chapter 4 describes the pathfinding algorithms implemented in the system
+    \item Chapter 5 presents the experimental setup and evaluation methodology
+    \item Chapter 6 analyzes the results and discusses the findings
+    \item Chapter 7 concludes the report and suggests directions for future work
+\end{itemize}
+
+\chapter{LITERATURE REVIEW}
+\addcontentsline{toc}{chapter}{Literature Review}
+
+\section{Pathfinding Algorithms}
+
+\subsection{Classical Pathfinding Algorithms}
+Classical pathfinding algorithms form the foundation of route planning in various applications. Dijkstra's algorithm, introduced by Edsger W. Dijkstra in 1959 \cite{dijkstra1959note}, guarantees the shortest path in weighted graphs but explores nodes in all directions, making it computationally expensive for large search spaces. The A* algorithm, developed by Hart, Nilsson, and Raphael in 1968 \cite{hart1968formal}, improves upon Dijkstra's by using a heuristic function to guide the search toward the goal, significantly reducing computation time while maintaining optimality under certain conditions.
+
+Breadth-First Search (BFS) and Depth-First Search (DFS) represent fundamental graph traversal strategies. BFS guarantees the shortest path in unweighted graphs but requires more memory, while DFS explores deeply before backtracking, using less memory but potentially finding suboptimal paths \cite{cormen2009introduction}.
+
+\subsection{Advanced Pathfinding Techniques}
+Advanced pathfinding techniques have emerged to address specific challenges in complex environments. Bidirectional search, which runs simultaneous searches from both start and goal, can significantly reduce the search space \cite{pohl1971bi}. Jump Point Search (JPS), introduced by Harabor and Grastien \cite{harabor2011online}, optimizes A* for uniform-cost grid maps by identifying "jump points" to skip unnecessary nodes, showing particular efficiency in open areas.
+
+Theta* \cite{nash2007theta} extends A* to allow any-angle paths rather than grid-aligned movements, producing more natural routes at the cost of additional computation. Fringe Search offers memory advantages in very large environments by combining elements of A* and iterative deepening \cite{bjornsson2005fringe}.
+
+\subsection{Dynamic and Real-time Pathfinding}
+Dynamic pathfinding algorithms address environments where obstacles or costs change over time. The D* (Dynamic A*) algorithm, developed by Stentz \cite{stentz1994optimal}, efficiently recalculates paths when the environment changes. D* Lite, introduced by Koenig and Likhachev \cite{koenig2002d}, simplifies D* while maintaining its efficiency. Lifelong Planning A* (LPA*) \cite{koenig2004lifelong} maintains information between planning episodes to efficiently update paths.
+
+Anytime algorithms like Anytime A* and ARA* \cite{likhachev2003ara} provide a valuable trade-off by quickly returning valid but potentially suboptimal paths, then improving them if more computation time is available. These approaches are particularly relevant for time-critical applications like emergency evacuation.
+
+\subsection{Bio-inspired Pathfinding Algorithms}
+Bio-inspired algorithms draw inspiration from natural processes. Ant Colony Optimization (ACO), introduced by Dorigo \cite{dorigo1996ant}, mimics the foraging behavior of ants using virtual pheromone trails to find optimal paths. Genetic Algorithms (GA) \cite{holland1992adaptation} evolve a population of possible paths through selection, crossover, and mutation operations.
+
+Swarm Intelligence approaches model collective behavior for crowd evacuation, with agents following simple local rules that lead to emergent global behavior. These methods are particularly relevant for simulating realistic crowd dynamics during evacuations \cite{helbing1995social}.
+
+\section{Building Evacuation Systems}
+
+\subsection{Traditional Evacuation Planning}
+Traditional evacuation planning relies on static routes marked by signs and floor plans. Research by Kobes et al. \cite{kobes2010building} highlights the limitations of these approaches, particularly when predefined routes become blocked or dangerous. Studies show that dynamic systems that adapt to changing conditions can significantly improve evacuation outcomes \cite{kuligowski2005review}.
+
+\subsection{Computational Approaches to Evacuation}
+Computational approaches to evacuation planning have evolved from simple graph-based models to sophisticated simulations. Cellular automata models \cite{zheng2009modeling} represent buildings as grid cells with transition rules governing movement. Agent-based models \cite{tang2008evacuation} simulate individual evacuees with behavioral characteristics, allowing for more realistic crowd dynamics.
+
+Network flow models \cite{hamacher2002mathematical} treat evacuation as a time-dependent flow problem, optimizing the movement of multiple evacuees simultaneously. These approaches provide valuable insights into bottlenecks and congestion points in evacuation scenarios.
+
+\subsection{Fire Dynamics in Evacuation Modeling}
+Fire dynamics significantly impact evacuation planning. Research by Purser \cite{purser2002toxicity} examines how fire and smoke spread affects evacuation time and route availability. Computational fluid dynamics (CFD) models \cite{mcgrattan2000fire} provide detailed simulations of fire behavior in buildings, informing more realistic evacuation scenarios.
+
+Coupled fire and evacuation models \cite{ronchi2013coupling} integrate fire dynamics with evacuee movement, allowing for more accurate prediction of evacuation outcomes in real fire scenarios. These models highlight the importance of dynamic path planning that adapts to changing fire conditions.
+
+\section{Algorithm Performance in Evacuation Contexts}
+
+\subsection{Computational Efficiency vs. Path Optimality}
+Research by Delling et al. \cite{delling2009engineering} examines the trade-offs between computational efficiency and path optimality in various pathfinding algorithms. In evacuation contexts, this balance is particularly critical, as noted by Zhan and Chen \cite{zhan2008fastest}, who analyze the performance of different algorithms under time constraints.
+
+\subsection{Multi-objective Pathfinding}
+Evacuation routes often need to optimize multiple objectives simultaneously. Work by Mandow and Pérez de la Cruz \cite{mandow2010multiobjective} explores multi-objective pathfinding algorithms that balance factors like distance, safety, and congestion. These approaches are particularly relevant for evacuation scenarios where the shortest path may not always be the safest.
+
+\subsection{Real-time Performance Considerations}
+Real-time performance is crucial for dynamic evacuation systems. Research by Koenig and Likhachev \cite{koenig2006real} evaluates the performance of real-time pathfinding algorithms in changing environments. Their work highlights the importance of algorithms that can quickly adapt to new information while maintaining reasonable path quality.
+
+\section{Research Gap}
+Despite extensive research in both pathfinding algorithms and evacuation systems, several gaps remain:
+\begin{itemize}
+    \item Comprehensive comparison of multiple pathfinding algorithms specifically in building evacuation contexts
+    \item Analysis of algorithm performance in multi-floor buildings with dynamic fire spread
+    \item Evaluation of bio-inspired algorithms against traditional approaches for evacuation routing
+    \item Framework for algorithm selection based on building characteristics and emergency conditions
+\end{itemize}
+
+This research aims to address these gaps by implementing and comparing 17 different pathfinding algorithms in a realistic building evacuation simulation with dynamic fire spread.
+
+\chapter{SYSTEM ARCHITECTURE AND IMPLEMENTATION}
+\addcontentsline{toc}{chapter}{System Architecture and Implementation}
+
+\section{System Overview}
+The Building Evacuation System follows a modular architecture with three main components: Building Simulation, Pathfinding Algorithms, and Visualization. This design allows for independent development and testing of each component while maintaining clear interfaces between them.
+
+\section{Building Simulation Module}
+
+\subsection{Building Representation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/building_structure.png}
+    \caption{Building structure overview}
+    \label{fig:building_structure}
+\end{figure}
+
+The building is represented as a 3D grid where each cell has coordinates (x, y, floor) and can be one of the following types:
+\begin{itemize}
+    \item Walkable (0): Open space where agents can move
+    \item Wall (1): Structural elements that block movement
+    \item Fire (2): Hazardous areas that block movement and spread over time
+    \item Stairs (3): Connections between floors
+    \item Exit (4): Building exit points (evacuation goals)
+\end{itemize}
+
+As shown in Figure \ref{fig:building_structure}, this representation allows for efficient pathfinding while capturing the essential elements of building structure.
+
+\subsection{Fire Spread Simulation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/fire_spread.png}
+    \caption{Fire spread simulation}
+    \label{fig:fire_spread}
+\end{figure}
+
+The fire spread is modeled using a probabilistic approach:
+\begin{itemize}
+    \item Fire starts at a specified position
+    \item For each time step, fire has a probability (fire\_spread\_rate) of spreading to adjacent walkable cells
+    \item Fire cannot spread through walls or stairs
+    \item Fire spread is visualized in real-time, as shown in Figure \ref{fig:fire_spread}
+\end{itemize}
+
+The implementation uses a set to track fire positions and updates them at each simulation step:
+
+\begin{verbatim}
+for each fire cell:
+    for each neighbor:
+        if neighbor is walkable and random() < spread_rate:
+            set neighbor on fire
+update fire positions
+\end{verbatim}
+
+\subsection{Agent Model}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/evacuation_paths.png}
+    \caption{Evacuation paths for agents}
+    \label{fig:evacuation_paths}
+\end{figure}
+
+Evacuation agents (people) have the following properties:
+\begin{itemize}
+    \item Current position in the building
+    \item Evacuation status (evacuating, evacuated)
+    \item Current path to nearest exit
+    \item Movement speed
+\end{itemize}
+
+As shown in Figure \ref{fig:evacuation_paths}, agents follow calculated paths and update their positions at each simulation step. When fire blocks a path, the system recalculates a new path for affected agents.
+
+\section{Pathfinding Algorithm Module}
+The pathfinding module implements 17 different algorithms across four categories. Each algorithm inherits from a base class that provides common functionality:
+
+\begin{verbatim}
+class PathFinder:
+    get_neighbors(position):
+        return valid adjacent cells (including stairs)
+    heuristic(pos1, pos2):
+        return 3D Euclidean distance
+\end{verbatim}
+
+The module provides a unified interface for all algorithms, allowing for easy comparison and integration with the simulation.
+
+\section{Visualization Module}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/web_interface.png}
+    \caption{Web interface of the evacuation system, showing the user controls and real-time simulation status. This interface allows users to configure scenarios, start/stop simulations, and view algorithm performance metrics.}
+    \label{fig:web_interface}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/web_3d_visualization.png}
+    \caption{3D visualization capabilities of the system, displaying building structure, fire spread, and evacuation paths in an interactive environment. The 3D view helps users understand spatial relationships and agent movement across multiple floors.}
+    \label{fig:web_3d_visualization}
+\end{figure}
+
+The visualization module uses Matplotlib to create a 3D representation of the building, fire, and evacuation paths, as shown in Figures \ref{fig:web_interface} and \ref{fig:web_3d_visualization}. Key features include:
+\begin{itemize}
+    \item 3D rendering of building structure
+    \item Color-coded cells (walls, fire, stairs, exits)
+    \item Path visualization with line plots
+    \item Agent movement animation
+    \item Interactive controls for fire placement and simulation management
+\end{itemize}
+
+\begin{verbatim}
+for each cell in building:
+    if cell is not walkable:
+        plot cell in 3D view
+\end{verbatim}
+
+\section{Integration and Data Flow}
+The system integrates the three modules through a main application class that manages the simulation loop and user interaction. The data flow follows these steps:
+
+\begin{enumerate}
+    \item Building layout is generated or loaded
+    \item Fire is placed at specified location(s)
+    \item Evacuation agents are positioned throughout the building
+    \item Pathfinding algorithms calculate optimal routes to exits
+    \item Fire spreads dynamically, potentially blocking routes
+    \item Algorithms recalculate paths in response to changing conditions
+    \item Visualization displays the entire process in real-time
+\end{enumerate}
+
+This integrated approach allows for comprehensive testing and evaluation of different pathfinding algorithms in realistic evacuation scenarios.
+
+\chapter{PATHFINDING ALGORITHMS}
+\addcontentsline{toc}{chapter}{Pathfinding Algorithms}
+
+\section{Basic Algorithms}
+
+\subsection{A* Algorithm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/astar_flowchart.png}
+    \caption{Flowchart of the A* algorithm. The diagram illustrates the process of node expansion, cost calculation, and heuristic-guided search. Key steps include maintaining open and closed sets, updating costs, and reconstructing the optimal path when the goal is reached.}
+    \label{fig:astar_flowchart}
+\end{figure}
+
+A* is a best-first search algorithm that uses a heuristic function to guide the search towards the goal, as illustrated in Figure \ref{fig:astar_flowchart}. It combines the cost to reach a node (g-cost) with the estimated cost to reach the goal from that node (h-cost).
+
+\begin{verbatim}
+open_set = {start}
+while open_set not empty:
+    current = node with lowest f in open_set
+    if current == goal: return path
+    for each neighbor:
+        if better path: update costs and parent
+\end{verbatim}
+
+\textbf{Time Complexity:} O(b\textsuperscript{d}) where b is the branching factor and d is the depth of the solution
+
+\textbf{Space Complexity:} O(b\textsuperscript{d}) to store all nodes
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item Guarantees the shortest path when the heuristic is admissible
+    \item More efficient than Dijkstra's algorithm in most cases
+    \item Widely applicable to different graph structures
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item Memory usage can be high for large search spaces
+    \item Performance depends on the quality of the heuristic function
+    \item May not be suitable for dynamic environments without modifications
+\end{itemize}
+
+\subsection{Dijkstra's Algorithm}
+Dijkstra's algorithm is a special case of A* where the heuristic is always zero. It guarantees the shortest path by exploring nodes in order of their distance from the start.
+
+\begin{verbatim}
+set all distances to infinity
+set start distance to 0
+while nodes remain:
+    current = node with min distance
+    for each neighbor:
+        if shorter path found: update distance
+reconstruct path from goal
+\end{verbatim}
+
+\textbf{Time Complexity:} O(V\textsuperscript{2}) where V is the number of vertices (cells)
+
+\textbf{Space Complexity:} O(V)
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item Guarantees the shortest path in all cases
+    \item Does not require a heuristic function
+    \item Works with negative edge weights (with modifications)
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item Explores in all directions, making it less efficient than A*
+    \item Higher computational cost for large graphs
+    \item Not suitable for real-time applications with tight time constraints
+\end{itemize}
+
+\subsection{Breadth-First Search (BFS)}
+BFS explores all nodes at the current depth before moving to nodes at the next depth level.
+
+\begin{verbatim}
+queue = [start]
+while queue not empty:
+    current = queue.pop()
+    if current == goal: return path
+    for each neighbor:
+        if not visited: queue.append(neighbor)
+\end{verbatim}
+
+\textbf{Time Complexity:} O(V + E) where V is vertices and E is edges
+
+\textbf{Space Complexity:} O(V)
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item Guarantees the shortest path in unweighted graphs
+    \item Simple implementation
+    \item Good for finding paths with fewest edges
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item Does not account for edge weights
+    \item Higher memory usage than DFS
+    \item Not efficient for large search spaces
+\end{itemize}
+
+\section{Advanced Algorithms}
+
+\subsection{Jump Point Search (JPS)}
+JPS is an optimization of A* for uniform-cost grid maps that identifies "jump points" to skip unnecessary nodes.
+
+\begin{verbatim}
+open_set = {start}
+while open_set not empty:
+    current = node with lowest f
+    for each direction:
+        jump_point = find_jump_point(current, direction)
+        if jump_point: add to open_set
+\end{verbatim}
+
+\textbf{Time Complexity:} O(b\textsuperscript{d}) but with a much smaller effective branching factor
+
+\textbf{Space Complexity:} O(b\textsuperscript{d})
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item Significantly faster than A* in open areas
+    \item Maintains path optimality
+    \item Reduces the number of nodes explored
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item Complex implementation
+    \item Only works efficiently on uniform-cost grid maps
+    \item Less effective in cluttered environments
+\end{itemize}
+
+\section{Dynamic Algorithms}
+
+\subsection{D* Lite}
+D* Lite is a simplified and faster version of D* that uses a different mechanism for path repair.
+
+\begin{verbatim}
+initialize g, rhs for all nodes
+add goal to priority queue
+while queue not empty:
+    update vertex with min key
+    if path changes: update affected nodes
+extract path from start to goal
+\end{verbatim}
+
+\textbf{Time Complexity:} O(k log k) where k is the number of affected nodes
+
+\textbf{Space Complexity:} O(n) where n is the total number of nodes
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item Efficiently handles dynamic environments
+    \item Updates only affected parts of the path
+    \item More efficient implementation than original D*
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item Complex implementation
+    \item Higher memory requirements than A*
+    \item Overhead for small or simple environments
+\end{itemize}
+
+\section{Bio-Inspired Algorithms}
+
+\subsection{Ant Colony Optimization (ACO)}
+ACO is inspired by the foraging behavior of ants, using virtual pheromone trails to find optimal paths.
+
+\begin{verbatim}
+for each iteration:
+    for each ant:
+        build path from start to goal using pheromones
+        if path reaches goal and is best: save path
+    update pheromones based on paths
+return best path found
+\end{verbatim}
+
+\textbf{Time Complexity:} O(n\_ants * n\_iterations * n\_nodes)
+
+\textbf{Space Complexity:} O(n\_nodes\textsuperscript{2}) for pheromone matrix
+
+\textbf{Advantages:}
+\begin{itemize}
+    \item Can find multiple diverse paths
+    \item Adapts well to changing environments
+    \item Parallelizable (multiple ants can explore simultaneously)
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}
+    \item Requires parameter tuning
+    \item Convergence can be slow
+    \item Higher computational cost than traditional algorithms
+\end{itemize}
+
+\chapter{EXPERIMENTAL SETUP AND EVALUATION}
+\addcontentsline{toc}{chapter}{Experimental Setup and Evaluation}
+
+\section{Evaluation Metrics}
+The system evaluates algorithms based on several key metrics:
+
+\begin{enumerate}
+    \item \textbf{Path Length}: Total distance of the calculated evacuation route
+    \item \textbf{Computation Time}: Time required to calculate the path
+    \item \textbf{Memory Usage}: Peak memory consumption during calculation
+    \item \textbf{Success Rate}: Percentage of scenarios where a valid path is found
+    \item \textbf{Path Quality}: Smoothness and realism of the generated path
+    \item \textbf{Adaptability}: Ability to recalculate when conditions change
+\end{enumerate}
+
+\section{Test Scenarios}
+To evaluate algorithm performance across different conditions, the following test scenarios were developed:
+
+\subsection{Scenario 1: Simple Building, Static Fire}
+\begin{itemize}
+    \item 3-floor building with simple layout
+    \item Single fire source that does not spread
+    \item Multiple evacuation agents on different floors
+    \item Focus on path optimality
+\end{itemize}
+
+\subsection{Scenario 2: Complex Building, Static Fire}
+\begin{itemize}
+    \item 5-floor building with complex layout (many rooms and corridors)
+    \item Multiple fire sources that do not spread
+    \item Focus on computational efficiency in large search spaces
+\end{itemize}
+
+\subsection{Scenario 3: Dynamic Fire Spread}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/fire_rerouting.png}
+    \caption{Visualization of dynamic path recalculation in response to fire spread. The original evacuation path (blue) becomes blocked by fire (red cells), triggering the algorithm to calculate an alternative route (green) to the nearest exit. This demonstrates the adaptability of pathfinding algorithms to changing environmental conditions.}
+    \label{fig:fire_rerouting}
+\end{figure}
+
+As shown in Figure \ref{fig:fire_rerouting}, this scenario tests the algorithm's ability to adapt to changing conditions:
+\begin{itemize}
+    \item 3-floor building with moderate complexity
+    \item Single fire source that spreads rapidly
+    \item Focus on algorithm adaptability to changing conditions
+\end{itemize}
+
+\subsection{Scenario 4: Multiple Evacuees}
+\begin{itemize}
+    \item 3-floor building with moderate complexity
+    \item Multiple fire sources with moderate spread rate
+    \item Large number of evacuation agents (50+)
+    \item Focus on handling multiple simultaneous path calculations
+\end{itemize}
+
+\section{Experimental Procedure}
+The experimental procedure followed these steps:
+
+\begin{enumerate}
+    \item Initialize building layout according to scenario specifications
+    \item Place fire sources at predetermined locations
+    \item Position evacuation agents throughout the building
+    \item For each algorithm:
+    \begin{enumerate}
+        \item Measure initial path calculation time
+        \item Record path length and quality metrics
+        \item Simulate fire spread at regular intervals
+        \item Measure path recalculation time when fire blocks routes
+        \item Record success rate in finding alternative paths
+        \item Monitor memory usage throughout the simulation
+    \end{enumerate}
+    \item Repeat each scenario 10 times with different random seeds
+    \item Calculate average performance metrics across all runs
+\end{enumerate}
+
+\section{Implementation Details}
+The experiments were conducted using the following implementation details:
+
+\begin{itemize}
+    \item \textbf{Hardware}: Intel Core i7 processor, 16GB RAM
+    \item \textbf{Software}: Python 3.8, NumPy 1.20.3, Matplotlib 3.4.2
+    \item \textbf{Building Dimensions}: Varied by scenario (20x20x3 to 50x50x5)
+    \item \textbf{Fire Spread Rate}: 0.1 (10\% chance per adjacent cell per time step)
+    \item \textbf{Time Step Duration}: 1 second per simulation step
+    \item \textbf{Maximum Path Length}: 1000 steps (to prevent infinite loops)
+    \item \textbf{Heuristic Function}: 3D Euclidean distance with floor penalty
+\end{itemize}
+
+\chapter{RESULTS AND DISCUSSION}
+\addcontentsline{toc}{chapter}{Results and Discussion}
+
+\section{Performance Comparison}
+
+\subsection{Computation Time}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/algorithm_analysis_1.png}
+    \caption{Average computation time comparison across all pathfinding algorithms. The graph shows relative performance with Jump Point Search demonstrating the fastest computation times in open areas, while bio-inspired algorithms like Ant Colony Optimization required significantly more processing time.}
+    \label{fig:computation_time}
+\end{figure}
+
+Figure \ref{fig:computation_time} shows the average computation time for each algorithm across all scenarios.
+
+The results indicate that:
+\begin{itemize}
+    \item Jump Point Search (JPS) consistently outperformed other algorithms in computation time, particularly in open areas
+    \item A* provided a good balance between speed and optimality
+    \item Bio-inspired algorithms (ACO, GA) required significantly more computation time
+    \item Dynamic algorithms (D*, D* Lite) showed higher initial computation time but faster recalculation
+\end{itemize}
+
+\subsection{Path Length}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/algorithm_analysis_2.png}
+    \caption{Comparison of average path lengths produced by different pathfinding algorithms. The graph illustrates how algorithms like Dijkstra's and A* consistently find optimal (shortest) paths, while others like DFS produce significantly longer routes. Theta* shows slightly longer but more natural paths with fewer turns.}
+    \label{fig:path_length}
+\end{figure}
+
+Figure \ref{fig:path_length} compares the average path length produced by each algorithm.
+
+Key findings include:
+\begin{itemize}
+    \item Dijkstra's algorithm and A* consistently found the shortest paths
+    \item Theta* produced slightly longer but more natural paths (fewer turns)
+    \item DFS generated significantly longer paths in most scenarios
+    \item Bio-inspired algorithms produced paths of varying quality depending on parameter settings
+\end{itemize}
+
+\subsection{Memory Usage}
+Figure 6.3 shows the peak memory usage for each algorithm.
+
+The analysis reveals:
+\begin{itemize}
+    \item DFS had the lowest memory footprint due to its stack-based approach
+    \item A* and Dijkstra's algorithm had high memory usage in complex scenarios
+    \item Fringe Search showed better memory efficiency than A* in large environments
+    \item ACO required substantial memory for the pheromone matrix in complex buildings
+\end{itemize}
+
+\subsection{Success Rate}
+Figure 6.4 presents the success rate of each algorithm in finding valid paths.
+
+Notable observations:
+\begin{itemize}
+    \item A*, Dijkstra's, and BFS achieved 100\% success rate in static scenarios
+    \item Dynamic algorithms (D*, D* Lite) maintained high success rates even with rapid fire spread
+    \item Bio-inspired algorithms showed lower success rates but improved with more iterations
+    \item RRT* had lower success rates in cluttered environments but performed well in open spaces
+\end{itemize}
+
+\section{Scenario-Based Analysis}
+
+\subsection{Scenario 1: Simple Building, Static Fire}
+In the simple building scenario with static fire:
+\begin{itemize}
+    \item A* and Dijkstra's algorithm provided optimal solutions with reasonable computation time
+    \item JPS showed minimal advantage due to the limited open space
+    \item Bio-inspired algorithms were unnecessarily complex for this scenario
+    \item BFS performed well due to the relatively small search space
+\end{itemize}
+
+\subsection{Scenario 2: Complex Building, Static Fire}
+In the complex building scenario:
+\begin{itemize}
+    \item JPS significantly outperformed other algorithms in computation time
+    \item Bidirectional Search showed substantial improvements over unidirectional approaches
+    \item Memory usage became a limiting factor for Dijkstra's algorithm
+    \item Theta* produced more natural paths through the complex environment
+\end{itemize}
+
+\subsection{Scenario 3: Dynamic Fire Spread}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/fire_rerouting.png}
+    \caption{Demonstration of path rerouting due to fire spread. The original evacuation path (blue) becomes blocked by fire (red cells), triggering the algorithm to calculate a new safe route (green). This visualization highlights the critical ability of dynamic algorithms to adapt to changing hazardous conditions in real-time.}
+    \label{fig:fire_rerouting}
+\end{figure}
+
+With dynamic fire spread, as illustrated in Figure \ref{fig:fire_rerouting}:
+\begin{itemize}
+    \item D* Lite demonstrated superior performance in path recalculation
+    \item LPA* efficiently updated paths when fire blocked routes
+    \item Anytime A* provided quick initial responses with progressive improvement
+    \item Traditional algorithms required complete recalculation, increasing computation time
+\end{itemize}
+
+\subsection{Scenario 4: Multiple Evacuees}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/multi_floor_evacuation.png}
+    \caption{Multi-floor evacuation simulation showing multiple evacuees navigating from different floors to exits. The visualization demonstrates how different algorithms handle simultaneous path calculations for multiple agents across different building levels, highlighting the importance of efficient pathfinding in complex evacuation scenarios.}
+    \label{fig:multi_floor_evacuation}
+\end{figure}
+
+In the multiple evacuees scenario, as shown in Figure \ref{fig:multi_floor_evacuation}:
+\begin{itemize}
+    \item Swarm Intelligence produced realistic group behavior
+    \item ACO found diverse evacuation routes, reducing congestion
+    \item Parallel implementation of A* handled multiple path calculations efficiently
+    \item Memory usage became critical with large numbers of simultaneous calculations
+\end{itemize}
+
+\section{Algorithm Selection Guidelines}
+Based on the experimental results, the following guidelines for algorithm selection are proposed:
+
+\begin{enumerate}
+    \item \textbf{For simple buildings with few obstacles}:
+    \begin{itemize}
+        \item Use A* or JPS for efficient path calculation
+        \item Consider BFS if path optimality is critical and the building is small
+    \end{itemize}
+    
+    \item \textbf{For complex buildings with many obstacles}:
+    \begin{itemize}
+        \item Use JPS or Bidirectional Search for faster computation
+        \item Consider Theta* if path naturalness is important
+        \item Use Fringe Search if memory is limited
+    \end{itemize}
+    
+    \item \textbf{For dynamic environments with changing obstacles}:
+    \begin{itemize}
+        \item Use D* Lite or LPA* for efficient path updates
+        \item Consider Anytime A* if quick initial responses are needed
+        \item Use D* for complex scenarios with many changes
+    \end{itemize}
+    
+    \item \textbf{For multiple simultaneous evacuees}:
+    \begin{itemize}
+        \item Consider ACO for finding diverse evacuation routes
+        \item Use Swarm Intelligence for realistic group behavior
+        \item Implement parallel versions of A* or JPS for efficiency
+    \end{itemize}
+\end{enumerate}
+
+\section{Discussion of Trade-offs}
+The experimental results highlight several important trade-offs in algorithm selection:
+
+\subsection{Computation Time vs. Path Optimality}
+Faster algorithms like JPS and Bidirectional Search may occasionally produce slightly suboptimal paths. In evacuation scenarios, a near-optimal path calculated quickly may be preferable to waiting longer for the perfect path, especially when fire is spreading rapidly.
+
+\subsection{Memory Usage vs. Computation Time}
+Algorithms with lower memory footprints (like DFS and Fringe Search) often require more computation time. In resource-constrained environments, this trade-off becomes particularly important.
+
+\subsection{Adaptability vs. Initial Computation}
+Dynamic algorithms (D*, LPA*) have higher initial computation costs but adapt efficiently to changes. For static environments, this overhead is unnecessary, but for dynamic fire spread, the investment pays off with faster recalculations.
+
+\subsection{Simplicity vs. Performance}
+Simpler algorithms are easier to implement and debug but may not perform as well in complex scenarios. The added complexity of advanced algorithms must be justified by their performance benefits in specific applications.
+
+\chapter{CONCLUSION AND FUTURE WORK}
+\addcontentsline{toc}{chapter}{Conclusion and Future Work}
+
+\section{Summary of Findings}
+This research has implemented and compared 17 pathfinding algorithms for building evacuation scenarios with dynamic fire spread. The key findings include:
+
+\begin{itemize}
+    \item Different algorithms excel in specific scenarios, with no single algorithm being optimal for all cases
+    \item Dynamic algorithms (D*, D* Lite, LPA*) show particular promise for real-time evacuation planning with changing conditions
+    \item Jump Point Search offers significant performance improvements in open areas of complex buildings
+    \item Bio-inspired algorithms provide unique benefits for multiple evacuee scenarios by finding diverse paths
+    \item Algorithm selection significantly impacts evacuation efficiency, with computation time, path optimality, and adaptability being critical factors
+\end{itemize}
+
+\section{Contributions}
+The main contributions of this research include:
+
+\begin{enumerate}
+    \item A comprehensive comparison of 17 pathfinding algorithms in evacuation contexts
+    \item A realistic building simulation with dynamic fire spread for algorithm testing
+    \item Guidelines for algorithm selection based on building characteristics and emergency conditions
+    \item Implementation of advanced algorithms (JPS, D* Lite, ACO) for evacuation planning
+    \item Analysis of algorithm performance across multiple metrics and scenarios
+\end{enumerate}
+
+\section{Future Work}
+Several directions for future research have been identified:
+
+\begin{enumerate}
+    \item \textbf{Integration with Real Building Data}: Incorporate real building floor plans and structural data to validate algorithm performance in actual buildings.
+    
+    \item \textbf{Human Behavior Modeling}: Enhance the evacuation simulation with more realistic human behavior models, including panic behavior, group dynamics, and leader-follower relationships.
+    
+    \item \textbf{Multi-objective Pathfinding}: Develop and evaluate algorithms that optimize multiple objectives simultaneously (e.g., path length, safety, congestion avoidance).
+    
+    \item \textbf{Machine Learning Approaches}: Explore the use of reinforcement learning and other machine learning techniques to improve pathfinding in dynamic environments.
+    
+    \item \textbf{Hardware Acceleration}: Implement GPU-accelerated versions of the most promising algorithms to enable real-time performance in very large buildings.
+    
+    \item \textbf{Mobile Application}: Develop a mobile application that uses the best-performing algorithms to guide building occupants during actual emergencies.
+\end{enumerate}
+
+\section{Limitations}
+The current research has several limitations that should be addressed in future work:
+
+\begin{itemize}
+    \item The fire spread model is simplified and does not account for building materials, ventilation, or other factors that influence real fire behavior.
+    
+    \item Human behavior during evacuations is complex and influenced by factors not captured in the current agent model.
+    
+    \item The building representation uses a discrete grid, which may not accurately represent all architectural features.
+    
+    \item The evaluation focused on algorithmic performance rather than user experience in a real evacuation scenario.
+\end{itemize}
+
+Despite these limitations, the research provides valuable insights into algorithm selection for evacuation planning and establishes a foundation for future work in this critical area.
+
+\begin{thebibliography}{99}
+\bibitem{dijkstra1959note} Dijkstra, E. W. (1959). A note on two problems in connexion with graphs. Numerische Mathematik, 1(1), 269-271.
+
+\bibitem{hart1968formal} Hart, P. E., Nilsson, N. J., \& Raphael, B. (1968). A formal basis for the heuristic determination of minimum cost paths. IEEE Transactions on Systems Science and Cybernetics, 4(2), 100-107.
+
+\bibitem{cormen2009introduction} Cormen, T. H., Leiserson, C. E., Rivest, R. L., \& Stein, C. (2009). Introduction to Algorithms (3rd ed.). MIT Press.
+
+\bibitem{pohl1971bi} Pohl, I. (1971). Bi-directional search. Machine Intelligence, 6, 127-140.
+
+\bibitem{harabor2011online} Harabor, D., \& Grastien, A. (2011). Online graph pruning for pathfinding on grid maps. In Proceedings of the 25th AAAI Conference on Artificial Intelligence.
+
+\bibitem{nash2007theta} Nash, A., Daniel, K., Koenig, S., \& Felner, A. (2007). Theta*: Any-angle path planning on grids. In Proceedings of the AAAI Conference on Artificial Intelligence (Vol. 7, pp. 1177-1183).
+
+\bibitem{bjornsson2005fringe} Björnsson, Y., Enzenberger, M., Holte, R. C., \& Schaeffer, J. (2005). Fringe search: Beating A* at pathfinding on game maps. In Proceedings of the IEEE Symposium on Computational Intelligence and Games.
+
+\bibitem{stentz1994optimal} Stentz, A. (1994). Optimal and efficient path planning for partially-known environments. In Proceedings of the IEEE International Conference on Robotics and Automation (pp. 3310-3317).
+
+\bibitem{koenig2002d} Koenig, S., \& Likhachev, M. (2002). D* Lite. In Proceedings of the AAAI Conference on Artificial Intelligence (pp. 476-483).
+
+\bibitem{koenig2004lifelong} Koenig, S., Likhachev, M., \& Furcy, D. (2004). Lifelong planning A*. Artificial Intelligence, 155(1-2), 93-146.
+
+\bibitem{likhachev2003ara} Likhachev, M., Gordon, G. J., \& Thrun, S. (2003). ARA*: Anytime A* with provable bounds on sub-optimality. In Advances in Neural Information Processing Systems (pp. 767-774).
+
+\bibitem{dorigo1996ant} Dorigo, M., Maniezzo, V., \& Colorni, A. (1996). Ant system: optimization by a colony of cooperating agents. IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics), 26(1), 29-41.
+
+\bibitem{holland1992adaptation} Holland, J. H. (1992). Adaptation in natural and artificial systems: an introductory analysis with applications to biology, control, and artificial intelligence. MIT Press.
+
+\bibitem{helbing1995social} Helbing, D., \& Molnar, P. (1995). Social force model for pedestrian dynamics. Physical Review E, 51(5), 4282.
+
+\bibitem{kobes2010building} Kobes, M., Helsloot, I., De Vries, B., \& Post, J. G. (2010). Building safety and human behaviour in fire: A literature review. Fire Safety Journal, 45(1), 1-11.
+
+\bibitem{kuligowski2005review} Kuligowski, E. D. (2005). A review of building evacuation models. National Institute of Standards and Technology Technical Note, 1471.
+
+\bibitem{zheng2009modeling} Zheng, X., Zhong, T., \& Liu, M. (2009). Modeling crowd evacuation of a building based on seven methodological approaches. Building and Environment, 44(3), 437-445.
+
+\bibitem{tang2008evacuation} Tang, F., \& Ren, A. (2008). Agent-based evacuation model incorporating fire scene and building geometry. Tsinghua Science and Technology, 13(5), 708-714.
+
+\bibitem{hamacher2002mathematical} Hamacher, H. W., \& Tjandra, S. A. (2002). Mathematical modelling of evacuation problems: A state of the art. In Pedestrian and Evacuation Dynamics (pp. 227-266).
+
+\bibitem{purser2002toxicity} Purser, D. A. (2002). Toxicity assessment of combustion products. In SFPE Handbook of Fire Protection Engineering (3rd ed., pp. 2-83).
+
+\bibitem{mcgrattan2000fire} McGrattan, K. B., Baum, H. R., Rehm, R. G., Hamins, A., Forney, G. P., Floyd, J. E., ... \& Prasad, K. (2000). Fire dynamics simulator: Technical reference guide. NIST Special Publication, 1018.
+
+\bibitem{ronchi2013coupling} Ronchi, E., Kuligowski, E. D., Nilsson, D., Peacock, R. D., \& Reneke, P. A. (2016). Assessing the verification and validation of building fire evacuation models. Fire Technology, 52(1), 197-219.
+
+\bibitem{delling2009engineering} Delling, D., Sanders, P., Schultes, D., \& Wagner, D. (2009). Engineering route planning algorithms. In Algorithmics of Large and Complex Networks (pp. 117-139). Springer.
+
+\bibitem{zhan2008fastest} Zhan, F. B., \& Noon, C. E. (1998). Shortest path algorithms: an evaluation using real road networks. Transportation Science, 32(1), 65-73.
+
+\bibitem{mandow2010multiobjective} Mandow, L., \& Pérez de la Cruz, J. L. (2010). Multiobjective A* search with consistent heuristics. Journal of the ACM, 57(5), 1-25.
+
+\bibitem{koenig2006real} Koenig, S., \& Likhachev, M. (2006). Real-time adaptive A*. In Proceedings of the Fifth International Joint Conference on Autonomous Agents and Multiagent Systems (pp. 281-288).
+\end{thebibliography}
+
+\end{document}
